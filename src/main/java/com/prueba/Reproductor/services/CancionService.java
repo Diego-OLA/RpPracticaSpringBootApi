@@ -1,6 +1,9 @@
 package com.prueba.Reproductor.services;
 
+import com.prueba.Reproductor.dto.AlbumDTO;
+import com.prueba.Reproductor.dto.ArtistaDTO;
 import com.prueba.Reproductor.dto.CancionDTO;
+import com.prueba.Reproductor.dto.GeneroDTO;
 import com.prueba.Reproductor.mapper.CancionMapper;
 import com.prueba.Reproductor.model.Album;
 import com.prueba.Reproductor.model.Artista;
@@ -113,7 +116,7 @@ public class CancionService {
         cancionRepository.deleteById(id);
     }
 
-    
+
     public CancionDTO obtenerCancionAleatoria(Long usuarioId) {
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -125,20 +128,39 @@ public class CancionService {
             throw new RuntimeException("No hay canciones disponibles para los géneros del usuario");
         }
 
-        // 🎲 canción aleatoria
         int randomIndex = new Random().nextInt(canciones.size());
         Cancion cancion = canciones.get(randomIndex);
 
-        // 🔄 mapear a DTO (ajusta a tu mapper real)
         CancionDTO dto = new CancionDTO();
         dto.setId(cancion.getId());
         dto.setNombre(cancion.getNombre());
         dto.setNumeroTrack(cancion.getNumeroTrack());
         dto.setDuracionMinutos(cancion.getDuracionMinutos());
 
+        if (cancion.getAlbum() != null) {
+            AlbumDTO albumDTO = new AlbumDTO();
+            albumDTO.setId(cancion.getAlbum().getId());
+            albumDTO.setTitulo(cancion.getAlbum().getTitulo());
+            dto.setAlbumDTO(albumDTO);
+        }
+
+        if (cancion.getArtista() != null) {
+            ArtistaDTO artistaDTO = new ArtistaDTO();
+            artistaDTO.setId(cancion.getArtista().getId());
+            artistaDTO.setNombre(cancion.getArtista().getNombre());
+
+            if (cancion.getArtista().getGenero() != null) {
+                GeneroDTO generoDTO = new GeneroDTO();
+                generoDTO.setId(cancion.getArtista().getGenero().getId());
+                generoDTO.setNombre(cancion.getArtista().getGenero().getNombre());
+                artistaDTO.setGeneroDTO(generoDTO);
+            }
+
+            dto.setArtistaDTO(artistaDTO);
+        }
+
         return dto;
     }
-
     private void validarAlbumYArtista(CancionDTO dto) {
 
         if (dto.getArtistaDTO() == null || dto.getArtistaDTO().getId() == null) {

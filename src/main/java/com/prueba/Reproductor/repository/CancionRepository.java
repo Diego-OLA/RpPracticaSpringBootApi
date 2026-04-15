@@ -15,11 +15,8 @@ SELECT DISTINCT c
 FROM Cancion c
 JOIN c.artista a
 JOIN a.genero g
-JOIN UsuarioGenero ug
-WHERE ug.usuario.id = :usuarioId
-AND g.id = ug.genero.id
+JOIN UsuarioGenero ug ON ug.usuario.id = :usuarioId
+WHERE g.id = ug.genero.id
 """)
-   List<Cancion> findCancionesByUsuario(
-           @Param("usuarioId") Long usuarioId
-   );
+   List<Cancion> findCancionesByUsuario(@Param("usuarioId") Long usuarioId);
 }
