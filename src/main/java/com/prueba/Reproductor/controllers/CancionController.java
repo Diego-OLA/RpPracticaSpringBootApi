@@ -29,13 +29,28 @@ public class CancionController {
         return ResponseEntity.ok(canciones);
     }
 
-    @GetMapping("canciones/random/{id}")
+    @GetMapping("/canciones/random/{usuarioId}")
     public ResponseEntity<?> obtenerCancionAleatoria(
             @PathVariable Long usuarioId
     ) {
-        return ResponseEntity.ok(
-                cancionService.obtenerCancionAleatoria(usuarioId)
-        );
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            CancionDTO cancion = cancionService.obtenerCancionAleatoria(usuarioId);
+
+            response.put("message", "Canción obtenida correctamente");
+            response.put("cancion", cancion);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            response.put("message", "Ha ocurrido un error al obtener la canción");
+            response.put("error", e.getMessage());
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("canciones")

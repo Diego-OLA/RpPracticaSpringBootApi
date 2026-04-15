@@ -113,38 +113,30 @@ public class CancionService {
         cancionRepository.deleteById(id);
     }
 
+    
     public CancionDTO obtenerCancionAleatoria(Long usuarioId) {
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        List<Cancion> canciones;
-
-
-        if (usuario.getTipoCuenta() == 0) {
-
-            List<Long> generosIds = usuario.getGeneros()
-                    .stream()
-                    .map(g -> g.getId())
-                    .toList();
-
-            canciones = cancionRepository.findByArtista_Genero_IdIn(generosIds);
-
-        }
-
-        else {
-            canciones = cancionRepository.findAll();
-        }
+        List<Cancion> canciones = cancionRepository.findCancionesByUsuario(usuarioId);
 
         if (canciones.isEmpty()) {
-            throw new RuntimeException("No hay canciones disponibles");
+            throw new RuntimeException("No hay canciones disponibles para los géneros del usuario");
         }
 
+        // 🎲 canción aleatoria
+        int randomIndex = new Random().nextInt(canciones.size());
+        Cancion cancion = canciones.get(randomIndex);
 
-        Random random = new Random();
-        Cancion seleccionada = canciones.get(random.nextInt(canciones.size()));
+        // 🔄 mapear a DTO (ajusta a tu mapper real)
+        CancionDTO dto = new CancionDTO();
+        dto.setId(cancion.getId());
+        dto.setNombre(cancion.getNombre());
+        dto.setNumeroTrack(cancion.getNumeroTrack());
+        dto.setDuracionMinutos(cancion.getDuracionMinutos());
 
-        return CancionMapper.toDTO(seleccionada);
+        return dto;
     }
 
     private void validarAlbumYArtista(CancionDTO dto) {
