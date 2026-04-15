@@ -5,14 +5,17 @@ import com.prueba.Reproductor.mapper.CancionMapper;
 import com.prueba.Reproductor.model.Album;
 import com.prueba.Reproductor.model.Artista;
 import com.prueba.Reproductor.model.Cancion;
+import com.prueba.Reproductor.model.Usuario;
 import com.prueba.Reproductor.repository.AlbumRepository;
 import com.prueba.Reproductor.repository.ArtistaRepository;
 import com.prueba.Reproductor.repository.CancionRepository;
+import com.prueba.Reproductor.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.management.RuntimeErrorException;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +29,9 @@ public class CancionService {
 
     @Autowired
     private AlbumRepository albumRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
 
     public List<CancionDTO> findAll() {
@@ -84,7 +90,7 @@ public class CancionService {
 
         cancion.setArtista(artista);
 
-
+        validarAlbumYArtista(dto);
         // ALBUM (OPCIONAL)
 
         if (dto.getAlbumDTO() != null && dto.getAlbumDTO().getId() != null) {
@@ -105,6 +111,40 @@ public class CancionService {
 
     public void delete(Long id) {
         cancionRepository.deleteById(id);
+    }
+
+    public CancionDTO obtenerCancionAleatoria(Long usuarioId) {
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<Cancion> canciones;
+
+
+        if (usuario.getTipoCuenta() == 0) {
+
+            List<Long> generosIds = usuario.getGeneros()
+                    .stream()
+                    .map(g -> g.getId())
+                    .toList();
+
+            canciones = cancionRepository.findByArtista_Genero_IdIn(generosIds);
+
+        }
+
+        else {
+            canciones = cancionRepository.findAll();
+        }
+
+        if (canciones.isEmpty()) {
+            throw new RuntimeException("No hay canciones disponibles");
+        }
+
+
+        Random random = new Random();
+        Cancion seleccionada = canciones.get(random.nextInt(canciones.size()));
+
+        return CancionMapper.toDTO(seleccionada);
     }
 
     private void validarAlbumYArtista(CancionDTO dto) {

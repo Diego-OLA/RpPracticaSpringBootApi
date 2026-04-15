@@ -1,13 +1,14 @@
 package com.prueba.Reproductor.controllers;
 
 import com.prueba.Reproductor.dto.AlbumDTO;
+import com.prueba.Reproductor.dto.UsuarioDTO;
 import com.prueba.Reproductor.services.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/")
 public class AlbumController {
@@ -20,7 +21,9 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.findAll());
     }
 
-    @GetMapping("/{id}")
+
+
+    @GetMapping("albums/{id}")
     public ResponseEntity<AlbumDTO> findById(@PathVariable Long id) {
         AlbumDTO dto = albumService.findById(id);
 
@@ -31,7 +34,8 @@ public class AlbumController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/titulo/{titulo}")
+
+    @GetMapping("/albums/{titulo}")
     public ResponseEntity<AlbumDTO> findByTitulo(@PathVariable String titulo) {
         AlbumDTO dto = albumService.findByTitulo(titulo);
 

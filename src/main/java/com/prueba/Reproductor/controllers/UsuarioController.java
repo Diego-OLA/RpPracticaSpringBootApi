@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/")
 public class UsuarioController {
@@ -36,12 +36,20 @@ public class UsuarioController {
 
 
     @PutMapping("usuarios/{id}")
-    public ResponseEntity<UsuarioDTO> update(
+    public ResponseEntity<?> update(
             @PathVariable Long id,
             @RequestBody UsuarioDTO dto) {
 
-        UsuarioDTO response = usuarioService.update(id, dto);
-        return ResponseEntity.ok(response);
+        Map<String,Object> response = new HashMap<>();
+        try{
+            UsuarioDTO updated = usuarioService.update(id, dto);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+          response.put("message","error al intentar actualizar");
+          response.put("error",e.getMessage());
+            return new ResponseEntity<>(response,HttpStatus.CONFLICT);
+        }
+
     }
 
 
@@ -50,12 +58,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    /*
-    @GetMapping("/{id}")
+
+    @GetMapping("usuarios/{id}")
     public ResponseEntity<UsuarioDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.findById(id));
     }
-*/
+
 
    /* @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

@@ -1,13 +1,17 @@
 package com.prueba.Reproductor.services;
 
+import com.prueba.Reproductor.dto.ArtistaDTO;
 import com.prueba.Reproductor.dto.UsuarioDTO;
+import com.prueba.Reproductor.mapper.ArtistaMapper;
 import com.prueba.Reproductor.mapper.UsuarioMapper;
+import com.prueba.Reproductor.model.Artista;
 import com.prueba.Reproductor.model.Genero;
 import com.prueba.Reproductor.model.Usuario;
 import com.prueba.Reproductor.model.UsuarioGenero;
 import com.prueba.Reproductor.repository.GeneroRepository;
 import com.prueba.Reproductor.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -112,5 +116,11 @@ public class UsuarioService {
         usuario.getGeneros().addAll(nuevas);
 
         return UsuarioMapper.toDTO(usuarioRepository.save(usuario));
+    }
+
+    public UsuarioDTO findById(Long id) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(null);
+        if(usuario==null)return null;
+        return UsuarioMapper.toDTO(usuario);
     }
 }

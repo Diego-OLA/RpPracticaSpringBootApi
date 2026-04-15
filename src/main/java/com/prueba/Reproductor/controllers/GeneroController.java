@@ -1,6 +1,7 @@
 package com.prueba.Reproductor.controllers;
 
 import com.prueba.Reproductor.dto.GeneroDTO;
+import com.prueba.Reproductor.dto.UsuarioDTO;
 import com.prueba.Reproductor.services.GeneroService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,5 +84,10 @@ private GeneroService generoService;
             response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("generos/{id}")
+    public ResponseEntity<GeneroDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(generoService.findById(id));
     }
 }

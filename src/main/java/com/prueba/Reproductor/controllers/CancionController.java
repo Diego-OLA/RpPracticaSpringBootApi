@@ -2,6 +2,7 @@ package com.prueba.Reproductor.controllers;
 
 import com.prueba.Reproductor.dto.AlbumDTO;
 import com.prueba.Reproductor.dto.CancionDTO;
+import com.prueba.Reproductor.dto.UsuarioDTO;
 import com.prueba.Reproductor.services.AlbumService;
 import com.prueba.Reproductor.services.CancionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,16 @@ public class CancionController {
         List<CancionDTO> canciones = cancionService.findAll();
         return ResponseEntity.ok(canciones);
     }
+
+    @GetMapping("canciones/random/{id}")
+    public ResponseEntity<?> obtenerCancionAleatoria(
+            @PathVariable Long usuarioId
+    ) {
+        return ResponseEntity.ok(
+                cancionService.obtenerCancionAleatoria(usuarioId)
+        );
+    }
+
     @PostMapping("canciones")
     public ResponseEntity<?>save(@RequestBody CancionDTO cancionDTO){
         Map<String,Object> response = new HashMap<>();
@@ -48,6 +59,7 @@ public class CancionController {
         }catch (Exception e){
             response.put("message","error al guardar cancion");
             response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
 
@@ -91,6 +103,10 @@ public class CancionController {
 
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
+    }
+    @GetMapping("canciones/{id}")
+    public ResponseEntity<CancionDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(cancionService.findById(id));
     }
 
     @DeleteMapping("/{id}")

@@ -24,9 +24,7 @@ public class CancionMapper {
 
         }
         if(entity.getArtista()!=null){
-            ArtistaDTO artistaDTO = new ArtistaDTO();
-            artistaDTO.setId(entity.getArtista().getId());
-            artistaDTO.setNombre(entity.getArtista().getNombre());
+            ArtistaDTO artistaDTO = ArtistaMapper.toDTO(entity.getArtista());
             dto.setArtistaDTO(artistaDTO);
 
         }

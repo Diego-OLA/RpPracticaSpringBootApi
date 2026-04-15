@@ -1,6 +1,7 @@
 package com.prueba.Reproductor.controllers;
 
 import com.prueba.Reproductor.dto.ArtistaDTO;
+import com.prueba.Reproductor.dto.UsuarioDTO;
 import com.prueba.Reproductor.services.ArtistaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -81,6 +82,11 @@ public class ArtistaController {
             response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("artistas/{id}")
+    public ResponseEntity<ArtistaDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(artistaService.findById(id));
     }
 
 
